@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MbsNewProject</string>
+    <string name="start">START</string>
+    <string name="title_activity_lets_go">LetsGoActivity</string>
+</resources>
