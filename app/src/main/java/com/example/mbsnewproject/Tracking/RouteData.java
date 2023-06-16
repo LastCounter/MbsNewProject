@@ -4,6 +4,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RouteData {
     private String routeTitle;
@@ -40,4 +41,30 @@ public class RouteData {
     public ArrayList<GeoPoint> getGeoPoints() {
         return geoPoints;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        RouteData other = (RouteData) obj;
+
+        return Objects.equals(routeTitle, other.routeTitle) &&
+                Objects.equals(dateTime, other.dateTime) &&
+                Objects.equals(timeNeeded, other.timeNeeded) &&
+                Objects.equals(geoPoints, other.geoPoints) &&
+                distance == other.distance;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(routeTitle, dateTime, timeNeeded, geoPoints, distance);
+    }
+
 }

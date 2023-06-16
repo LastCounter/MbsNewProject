@@ -125,10 +125,13 @@ public class LetsGoActivity extends AppCompatActivity {
     }
 
     public void onClickStart() {
+
         startButton.setText("STOP");
         trackerService.startHandler();
         toolbar.setTitle("GO GO GO!");
+
     }
+
 
     public void onClickStop() {
         toolbar.setTitle("Lets Go!");
@@ -147,6 +150,7 @@ public class LetsGoActivity extends AppCompatActivity {
             String title = editText.getText().toString();
             dialog.cancel();
             trackerService.stopHandler(title);
+            mapView.getOverlays().add(locationOverlay);
         });
         Button cancelButton = (Button) dialog.findViewById(R.id.cancel);
         cancelButton.setOnClickListener(v -> {

@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         buttonPerformanceLogs = findViewById(R.id.buttonPerformanceLogs);
         buttonLetsGO = findViewById(R.id.buttonLetsGO);
         buttonPerformanceLogs.setOnClickListener(new View.OnClickListener() {
