@@ -24,6 +24,8 @@ import java.util.List;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 public class TrackerHandler {
     private Context context;
@@ -35,6 +37,7 @@ public class TrackerHandler {
 
     private long startTime;
     private long myTime;
+
 
     private RouteDBHelper routeDBHelper;
 
@@ -68,7 +71,7 @@ public class TrackerHandler {
 
         startTime = System.currentTimeMillis();
         tracking = true;
-        followUser();
+
 
     }
 
@@ -124,9 +127,7 @@ public class TrackerHandler {
 
     }
 
-    private void followUser() {
-        if (!tracking) return;
-    }
+
 
     private void extendRouteFromLocation(Location location) {
         geoPoints.add(new GeoPoint(location));
@@ -135,6 +136,7 @@ public class TrackerHandler {
         mapView.getOverlays().add(roadOverlay);
         mapView.invalidate();
     }
+
 
 
     public void addLocation(Location location) {

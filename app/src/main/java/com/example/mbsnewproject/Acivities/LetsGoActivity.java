@@ -23,6 +23,8 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 public class LetsGoActivity extends AppCompatActivity {
 
@@ -35,9 +37,10 @@ public class LetsGoActivity extends AppCompatActivity {
     private TrackerService trackerService;
     private Button startButton;
     private boolean started;
-
+    private IMapController mapController;
+    private Button centerButton;
     private Toolbar toolbar;
-
+    private MyLocationNewOverlay locationOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,32 +68,42 @@ public class LetsGoActivity extends AppCompatActivity {
 
 
         mapView.setMultiTouchControls(true);
-        IMapController mapController = mapView.getController();
-        mapController.setZoom(15.0);
-        GeoPoint startPoint = new GeoPoint(52.531677, 13.381777);
-        mapController.setCenter(startPoint);
 
+        mapController = mapView.getController();
         this.trackerService = new TrackerService(this, mapView);
 
         requestPermissions(PERMS, 1);
 
         startButton = (Button) findViewById(R.id.startStopButton);
         startButton.setOnClickListener(v -> onButtonClick());
-
-
-
-
+        centerButton = (Button) findViewById(R.id.centerButton);
+        centerButton.setOnClickListener(v -> reCenterClick());
 
     }
-        @Override
-        public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-            //TODO rework
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-            if (permissionGranted) trackerService.locate();
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        //TODO rework
+
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+
+        if (permissionGranted) {
+            this.locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mapView);
+            this.locationOverlay.enableFollowLocation();
+            mapView.getOverlays().add(this.locationOverlay);
+            trackerService.locate();
+        } else {
+            GeoPoint startPoint = new GeoPoint(52.531677, 13.381777);
+            mapController.setCenter(startPoint);
+        }
+        mapController.setZoom(15.0);
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -100,6 +113,7 @@ public class LetsGoActivity extends AppCompatActivity {
         //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         mapView.onResume(); //needed for compass, my location overlays, v6.0.0 and up
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -110,23 +124,23 @@ public class LetsGoActivity extends AppCompatActivity {
         mapView.onPause();  //needed for compass, my location overlays, v6.0.0 and up
     }
 
-    public void onClickStart(){
-       startButton.setText("STOP");
-       trackerService.startHandler();
+    public void onClickStart() {
+        startButton.setText("STOP");
+        trackerService.startHandler();
         toolbar.setTitle("GO GO GO!");
     }
 
-    public void onClickStop(){
+    public void onClickStop() {
         toolbar.setTitle("Lets Go!");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("save")
-                        .setView(R.layout.save_route_popup)
-                        .setCancelable(false);
+                .setView(R.layout.save_route_popup)
+                .setCancelable(false);
         AlertDialog dialog = builder.create();
         dialog.show();
-        Button saveButton =  (Button) dialog.findViewById(R.id.saveButton);
+        Button saveButton = (Button) dialog.findViewById(R.id.saveButton);
         EditText editText = (EditText) dialog.findViewById(R.id.inputTitle);
         saveButton.setOnClickListener(v -> {
 
@@ -136,8 +150,8 @@ public class LetsGoActivity extends AppCompatActivity {
         });
         Button cancelButton = (Button) dialog.findViewById(R.id.cancel);
         cancelButton.setOnClickListener(v -> {
-        dialog.cancel();
-        trackerService.stopHandler(null);
+            dialog.cancel();
+            trackerService.stopHandler(null);
         });
 
 
@@ -145,12 +159,22 @@ public class LetsGoActivity extends AppCompatActivity {
 
     }
 
-    public void onButtonClick(){
-        if (!started){
-           onClickStart();
-        }else onClickStop();
+    public void onButtonClick() {
+        if (!started) {
+            onClickStart();
+        } else onClickStop();
 
         started = !started;
+    }
+
+    private void reCenterClick() {
+        if (locationOverlay.getMyLocation() != null) {
+
+
+            mapView.getController().setCenter(locationOverlay.getMyLocation());
+        } else {
+            mapView.getController().setZoom(15.0);
+        }
     }
 
     public MapView getMapView() {
