@@ -38,7 +38,9 @@ public class PerformanceLogsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(PerformanceLogsActivity.this, MainActivity.class));
+        });
         toolbar.getNavigationIcon().setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP);
 
         routeDBHelper = new SharedPreferenceHelper(this);

@@ -3,37 +3,27 @@ package com.example.mbsnewproject.DB;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import androidx.test.core.app.ApplicationProvider;
-
 import com.example.mbsnewproject.Tracking.*;
 import android.util.Log;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.osmdroid.util.GeoPoint;
 
-/**
- * Tests for RouteDBHelper.
- */
+
 
 public class RouteDBHelperTest {
 
     private RouteDBHelper routeDBHelper;
     Context context;
 
-    /**
-     * Setup method executed before each test.
-     */
+
     @Before
     public void setUp() {
         // Initialisierung der Instanzen
@@ -42,9 +32,7 @@ public class RouteDBHelperTest {
     }
 
 
-    /**
-     * Cleanup method executed after each test.
-     */
+
     @After
     public void tearDown() {
         try {
@@ -58,9 +46,8 @@ public class RouteDBHelperTest {
 
 
 
-    /**
-     * Test the saving and loading functionality.
-     */
+
+
     @Test
     public void testSaveAndLoad() {
         // Erstellen eines RouteData-Objects
@@ -96,9 +83,7 @@ public class RouteDBHelperTest {
     }
 
 
-    /**
-     * Test loading a single RouteData.
-     */
+
     @Test
     public void testLoadSingleRouteData() {
         // Erstellen eines RouteData-Objects
@@ -121,9 +106,8 @@ public class RouteDBHelperTest {
         assertEquals(routeData.getDistance(), loadedRouteData.getDistance(), 0.001);
     }
 
-    /**
-     * Test removing a single RouteData.
-     */
+
+
     @Test
     public void testRemoveRouteData() {
         // Erstellen von RouteData-Objects
@@ -149,9 +133,7 @@ public class RouteDBHelperTest {
         assertEquals("myRoute2", remainingRouteData.getRouteTitle());
     }
 
-    /**
-     * Test removing all RouteData.
-     */
+
     @Test
     public void testRemoveAllRouteData() {
         // Erstellen von RouteData-Objects
@@ -173,9 +155,7 @@ public class RouteDBHelperTest {
         assertEquals(0, loadedRouteDataList.size());
     }
 
-    /**
-     * Test removing a single data point.
-     */
+
     @Test
     public void testRemoveSingleData() {
         // Erstellen und Speichern mehrerer RouteData-Objekte
@@ -197,9 +177,7 @@ public class RouteDBHelperTest {
         assertEquals(routeData2.getDateTime(), remainingRouteData.getDateTime());
     }
 
-    /**
-     * Test saving and loading with special characters.
-     */
+
     @Test
     public void testSaveAndLoadWithSpecialCharacters() {
         // Erstellen eines RouteData-Objekts mit besonderen Zeichen im Titel
@@ -216,9 +194,7 @@ public class RouteDBHelperTest {
     }
 
 
-    /**
-     * Test loading with a non-existent key.
-     */
+
     @Test
     public void testLoadWithNonExistentKey() {
         // Versuch, ein RouteData-Objekt mit einem nicht vorhandenen Schlüssel zu laden
@@ -230,9 +206,7 @@ public class RouteDBHelperTest {
     }
 
 
-    /**
-     * Test overwriting the same key.
-     */
+
     @Test
     public void testOverwritingSameKey() {
         RouteData routeData1 = new RouteData("myRoute", "2023-06-16 09:00:00", "1:30:00", 10.5, new ArrayList<>());
@@ -250,36 +224,8 @@ public class RouteDBHelperTest {
         assertEquals(routeData2.getDistance(), loadedRouteData.getDistance(), 0.001);
     }
 
-    /**
-     * Test concurrent access.
-     */
-    @Test
-    public void testConcurrentAccess() throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-        CountDownLatch latch = new CountDownLatch(4);
 
-        Runnable saveTask = () -> {
-            for (int i = 0; i < 100; i++) {
-                RouteData routeData = new RouteData("myRoute" + i, "2023-06-16 09:00:00", "1:30:00", 10.5, new ArrayList<>());
-                routeDBHelper.save(routeData);
-            }
-            latch.countDown();
-        };
 
-        // Run 4 threads in parallel
-        for (int i = 0; i < 4; i++) {
-            executor.submit(saveTask);
-        }
-
-        // Wait for all threads to finish
-        latch.await();
-
-        // Optionally, you can add assertions here to check the state of the data.
-    }
-
-    /**
-     * Test boundary values.
-     */
     @Test
     public void testBoundaryValues() {
         // Create a RouteData object with large distance value
@@ -295,9 +241,7 @@ public class RouteDBHelperTest {
 
 
 
-    /**
-     * Test loading multiple objects when database storage is empty.
-     */
+
     @Test
     public void testLoadAllWhenEmpty() {
         // Zunächst sollten wir sicherstellen, dass der Speicher leer ist.

@@ -24,10 +24,8 @@ import java.util.List;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-public class TrackerHandler {
+public class TrackerHandler implements ITrackerHandler{
     private Context context;
     private MapView mapView;
     private List<Location> locationList;
@@ -53,6 +51,10 @@ public class TrackerHandler {
 
     }
 
+    /**
+     * Fügt einen Marker auf der Karte hinzu.
+     * @param location Der Standort, für den der Marker hinzugefügt werden soll.
+     */
     private void addMarkerOnMap(Location location) {
         GeoPoint geoPoint = new GeoPoint(location);
         Log.d("MapApp", "Geopoint Lon: " + geoPoint.getLongitude() + " Lat: " + geoPoint.getLatitude());
@@ -67,13 +69,19 @@ public class TrackerHandler {
         mapView.invalidate();
     }
 
-    public void start() {
 
+    /**
+     * Startet die Aufzeichnung der Laufstrecke.
+     */
+    public void start() {
         startTime = System.currentTimeMillis();
         tracking = true;
-
-
     }
+
+    /**
+     * Beendet die Aufzeichnung der Laufstrecke.
+     * @param title Der Titel der aufgezeichneten Laufstrecke.
+     */
 
     public void stop(String title) {
         long stopTime = System.currentTimeMillis();
@@ -86,18 +94,19 @@ public class TrackerHandler {
         Log.d("MapApp", "stop: " + timeNeeded);
 
         tracking = false;
-
         if (title == null) return;
-
-
         Log.d("MapApp", "stop: " + title);
         saveRoute(title, timeNeeded);
     }
 
+    /**
+     * Speichert die aufgezeichnete Route.
+     * @param title  Der Titel der aufgezeichneten Route.
+     * @param timeNeeded  Die benötigte Zeit für die Route.
+     */
     private void saveRoute(String title, String timeNeeded) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
-
 
         Log.d("MapApp", "saveRoute: " + myTime);
         String dateTimeAsString = formatter.format(date);
@@ -116,6 +125,10 @@ public class TrackerHandler {
 
     }
 
+    /**
+     * Berechnet die Gesamtdistanz der Route.
+     * @return Die berechnete Gesamtdistanz der Route in Kilometer
+     */
     private double calculateDistance() {
         double distanceInMeters = 0;
         for (int i = 0; i < geoPoints.size() - 1; i++) {
@@ -128,7 +141,10 @@ public class TrackerHandler {
     }
 
 
-
+    /**
+     * Erweitert die aufgezeichnete Route basierend auf dem Standort.
+     * @param location Der Standort, der zur Erweiterung der Route verwendet wird.
+     */
     private void extendRouteFromLocation(Location location) {
         geoPoints.add(new GeoPoint(location));
         Road road = roadManager.getRoad(geoPoints);
@@ -139,12 +155,13 @@ public class TrackerHandler {
 
 
 
+    /**
+     * Fügt einen Standort zur Aufzeichnung hinzu.
+     * @param location Der hinzuzufügende Standort.
+     */
     public void addLocation(Location location) {
         if (!tracking) return;
-
-        addMarkerOnMap(location);
         extendRouteFromLocation(location);
-
     }
 
 }

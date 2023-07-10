@@ -3,17 +3,25 @@ package com.example.mbsnewproject.Tracking;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
+/**
+ * Eine Klasse zur Repräsentation von Routendaten.
+ */
 public class RouteData {
     private String routeTitle;
     private String dateTime;
-
     private String timeNeeded;
     private ArrayList<GeoPoint> geoPoints;
     private double distance;
 
+    /**
+     * Konstruktor der RouteData-Klasse.
+     * @param routeTitle Der Titel der Route.
+     * @param dateTime Das Datum und die Uhrzeit der Aufzeichnung.
+     * @param timeNeeded Die benötigte Zeit für die Route.
+     * @param distance Die Distanz der Route.
+     * @param geoPoints Die Liste der GeoPoints, die die Route repräsentieren.
+     */
     public RouteData(String routeTitle, String dateTime, String timeNeeded, double distance, ArrayList<GeoPoint> geoPoints){
         this.routeTitle = routeTitle;
         this.dateTime = dateTime;
@@ -43,28 +51,5 @@ public class RouteData {
     }
 
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-
-        RouteData other = (RouteData) obj;
-
-        return Objects.equals(routeTitle, other.routeTitle) &&
-                Objects.equals(dateTime, other.dateTime) &&
-                Objects.equals(timeNeeded, other.timeNeeded) &&
-                Objects.equals(geoPoints, other.geoPoints) &&
-                distance == other.distance;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(routeTitle, dateTime, timeNeeded, geoPoints, distance);
-    }
 
 }

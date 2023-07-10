@@ -27,6 +27,10 @@ public class SharedPreferenceHelper implements RouteDBHelper {
         sharedPreferences = context.getSharedPreferences(preference, Context.MODE_PRIVATE);
     }
 
+    /**
+     *
+     * @param routeData
+     */
     @Override
     public void save(RouteData routeData) {
         Gson gson = new Gson();
@@ -42,10 +46,13 @@ public class SharedPreferenceHelper implements RouteDBHelper {
         editor.apply();
     }
 
-
+    /**
+     *
+     * @param key
+     * @return
+     */
     @Override
     public RouteData load(String key) {
-        //TODO lädt eine einzige RoutData
         SharedPreferences sharedPreferences = context.getSharedPreferences(preference, Context.MODE_PRIVATE);
         String routeDataAsString = sharedPreferences.getString(key, null);
         Gson gson = new Gson();
@@ -54,9 +61,12 @@ public class SharedPreferenceHelper implements RouteDBHelper {
         return routeData;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public ArrayList<RouteData> loadAll() {
-        //TODO ruft meine load methode auf für jeden key
         ArrayList<RouteData> routeDataArrayList = new ArrayList<>();
         SharedPreferences sharedPreferences = context.getSharedPreferences(preference, Context.MODE_PRIVATE);
         Map<String, ?> allEntries = sharedPreferences.getAll();
@@ -67,6 +77,9 @@ public class SharedPreferenceHelper implements RouteDBHelper {
         return routeDataArrayList;
     }
 
+    /**
+     *
+     */
     @Override
     public void removeAll() {
         SharedPreferences sharedPreferences = context.getSharedPreferences(preference, Context.MODE_PRIVATE);
@@ -76,6 +89,10 @@ public class SharedPreferenceHelper implements RouteDBHelper {
         }
     }
 
+    /**
+     *
+     * @param key
+     */
     @Override
     public void remove(String key) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(preference, Context.MODE_PRIVATE);

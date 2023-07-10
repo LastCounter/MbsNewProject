@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -16,7 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.mbsnewproject.R;
-import com.example.mbsnewproject.Tracking.TrackerService;
+import com.example.mbsnewproject.Tracking.*;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -34,7 +35,7 @@ public class LetsGoActivity extends AppCompatActivity {
     };
 
     private MapView mapView;
-    private TrackerService trackerService;
+    private ITrackerService trackerService;
     private Button startButton;
     private boolean started;
     private IMapController mapController;
@@ -53,7 +54,9 @@ public class LetsGoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(LetsGoActivity.this, MainActivity.class));
+        });
         toolbar.getNavigationIcon().setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP);
 
 
@@ -70,7 +73,7 @@ public class LetsGoActivity extends AppCompatActivity {
         mapView.setMultiTouchControls(true);
 
         mapController = mapView.getController();
-        this.trackerService = new TrackerService(this, mapView);
+        this.trackerService = new TrackerService(this, new TrackerHandler (this, mapView));
 
         requestPermissions(PERMS, 1);
 

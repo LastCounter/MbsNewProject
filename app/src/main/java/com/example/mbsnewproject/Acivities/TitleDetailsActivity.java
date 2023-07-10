@@ -78,7 +78,9 @@ public class TitleDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(TitleDetailsActivity.this, PerformanceLogsActivity.class));
+        });
         toolbar.getNavigationIcon().setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP);
 
         textView1.setText(routeData.getTimeNeeded());

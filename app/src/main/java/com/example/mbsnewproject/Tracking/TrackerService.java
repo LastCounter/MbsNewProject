@@ -19,79 +19,57 @@ import org.osmdroid.views.MapView;
 
 import java.util.List;
 
-public class TrackerService extends Service implements LocationListener {
+public class TrackerService extends Service implements LocationListener, ITrackerService {
     Context context;
     double latitude;
     double longitude;
     LocationManager locationManager;
     Location location = null;
-    private TrackerHandler trackerHandler;
+    private ITrackerHandler trackerHandler;
 
     public TrackerService() {
     }
 
     //erklären
-    public TrackerService(Context context, MapView mapView) {
+    public TrackerService(Context context, ITrackerHandler trackerHandler) {
         this.context = context;
-        this.trackerHandler = new TrackerHandler(context, mapView);
+        this.trackerHandler = trackerHandler;
+
     }
 
 
-    //erklären
+    /**
+     * Diese Methode verwendet den Location Manager, um den aktuellen Standort des Benutzers abzurufen.
+     * @throws SecurityException Wenn die erforderlichen Berechtigungen für den Zugriff auf den Standort nicht vorhanden sind.
+     *
+     */
     public void locate() {
-
         try {
-            //kiregen ein Location manager über den context
             locationManager = (LocationManager) this.context.getSystemService(LOCATION_SERVICE);
-            //hatt der Benutzer ein aktives GPS oder ist es aus
             boolean istGPSActive = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             boolean isNetActive = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-
-            //wir wollen das über GPS auslesen GPSPROVIDER, warten eine Minute(Millisekunden), Genauigkeit (10m) und ein Location Listener
             if (istGPSActive) {
-                //updated
-                if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-
+                if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 }
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000, 10, this);
-                // kriegen unsere Location zurück
                 location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             } else if (isNetActive) {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000, 10, this);
-                // kriegen unsere Location zurück
                 location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
 
         }
-        //falls beide nicht an sind
         if (location != null) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-
-        }
-
-    }
-
-    public void startTrackerHandler() {
-        trackerHandler.start();
-    }
-
-    public void stopUpdates() {
-        if (locationManager != null) {
-            locationManager.removeUpdates(this);
         }
     }
+
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -144,9 +122,18 @@ public class TrackerService extends Service implements LocationListener {
         return 0;
     }
 
+    /**
+     * startet den Tracker-Handler.
+     * @see TrackerHandler
+     */
     public void startHandler() {
         trackerHandler.start();
     }
+    /**
+     * Stoppt den Tracker-Handler.
+     * @param title Der Titel der aufgezeichneten Laufstrecke.
+     * @see TrackerHandler
+     */
     public void stopHandler(String title) {
         trackerHandler.stop(title);
     }
